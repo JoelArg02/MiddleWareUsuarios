@@ -1,0 +1,8 @@
+@extends('app')
+
+@section('content')
+<div class="container text-center" style="margin-top: 50px;">
+    <h2>Adolescentes</h2>
+    <p>Este contenido es para usuarios de 13 a 17 años.</p>
+</div>
+@endsection
