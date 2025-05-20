@@ -34,7 +34,6 @@ class VerificarEdadUsuario
             'longevos'     => fn($e) => $e >= 75 && $e <= 120,
         ];
 
-        // Redirigir automáticamente según edad
         if ($ruta === 'redirigir') {
             foreach ($grupos as $segmento => $condicion) {
                 if ($condicion($edad)) {
@@ -44,18 +43,15 @@ class VerificarEdadUsuario
             return redirect('/acceso-denegado');
         }
 
-        // Validar acceso directo a grupo
         foreach ($grupos as $segmento => $condicion) {
             if ($ruta === $segmento && !$condicion($edad)) {
                 if ($user) {
-                    // Redirigir a su grupo correcto si está autenticado
                     foreach ($grupos as $rutaCorrecta => $condicionCorrecta) {
                         if ($condicionCorrecta($edad)) {
                             return redirect("/$rutaCorrecta");
                         }
                     }
                 } else {
-                    // Si es visitante → acceso denegado
                     return redirect('/acceso-denegado');
                 }
             }
