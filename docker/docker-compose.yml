@@ -1,0 +1,45 @@
+services:
+
+  db:
+    container_name: postgres_proyecto
+    image: postgres:15
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: laravel
+      POSTGRES_USER: laravel_user
+      POSTGRES_PASSWORD: laravel_password
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 1234:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    depends_on:
+      - db
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    restart: always
+    working_dir: /var/www
+    volumes:
+      - ../app:/var/www
+    depends_on:
+      - db
+    ports:
+      - 8002:8000
+    command: >
+      sh -c "if [ ! -f artisan ]; then
+        composer create-project laravel/laravel . --prefer-dist --no-install;
+      fi &&
+      if [ ! -d vendor ]; then
+        composer install;
+      fi &&
+      php artisan serve --host=0.0.0.0 --port=8000"
